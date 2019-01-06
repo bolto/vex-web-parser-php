@@ -195,13 +195,12 @@ class VEXWebParserController {
         //execute the handles
         do {
             $mrc = curl_multi_exec($mh, $active);
-        } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+        } while ($mrc === CURLM_CALL_MULTI_PERFORM);
 
-        while ($active && $mrc == CURLM_OK) {
-            if (curl_multi_select($mh) != -1) {
-                do {
-                    $mrc = curl_multi_exec($mh, $active);
-                } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+        while ($active && $mrc === CURLM_OK) {
+            $mrc = curl_multi_exec($mh, $active);
+            if (curl_multi_select($mh) == -1) {
+                continue;
             }
         }
         $responses = array();
