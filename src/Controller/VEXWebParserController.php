@@ -90,10 +90,10 @@ class VEXWebParserController {
          * Each canonical team number is the external team number. From VEX's
          * database, there is a real database team id, which can be found in
          * team's profile web page.
-         * 
-         * Example: 
+         *
+         * Example:
          *     <profile :team="93571" team-number="3716Z">
-         * 
+         *
          * Note: canonical team number is 3716Z, but database team id is 93571
          */
         $url = sprintf('https://www.robotevents.com/teams/VIQC/%s', $teamNumber);
@@ -153,7 +153,7 @@ class VEXWebParserController {
         return $res;
     }
 
-    public function getMultipleWebRequestsInGroupsOfTen($urls, $groupSize = 20) {
+    public function getMultipleWebRequestsInGroupsOfTen($urls, $groupSize = 40) {
         $counter = 0;
         $batchArray = null;
         $allResponses = array();
