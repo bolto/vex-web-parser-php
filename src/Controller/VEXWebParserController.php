@@ -36,7 +36,7 @@ class VEXWebParserController {
             $this->worldRankingsJsonObjects = array();
             $worldRankingsUrls = array();
             foreach (VEXWebParserController::SCHOOL_LEVELS as $level) {
-                $worldRankingJsonApiUrl = sprintf("https://www.robotevents.com/api/seasons/124/skills?post_season=0&grade_level=%s", $schoolLevel);
+                $worldRankingJsonApiUrl = sprintf("https://www.robotevents.com/api/seasons/124/skills?post_season=0&grade_level=%s", $level);
                 $worldRankingJsonApiUrl = str_replace(" ", "%20", $worldRankingJsonApiUrl);
                 $worldRankingsUrls[$level] = $worldRankingJsonApiUrl;
             }
