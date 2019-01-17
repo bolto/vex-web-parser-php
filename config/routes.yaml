@@ -3,9 +3,15 @@
 #    controller: App\Controller\DefaultController::index
 
 # the "app_vex_parser" route name is not important yet
-app_vex_team_list:
+app_vex_iq_team_list:
     path: /vex/iq/team_list/{name}
     controller: App\Controller\VEXIQWebParserController::parseTeamListFromEvent
-app_vex_team_awards:
+app_vex_iq_team_awards:
     path: /vex/iq/team_awards/{name}
     controller: App\Controller\VEXIQWebParserController::fetchTeamAwards
+app_vex_vrc_team_list:
+    path: /vex/vrc/team_list/{name}
+    controller: App\Controller\VEXVRCWebParserController::parseTeamListFromEvent
+app_vex_vrc_team_awards:
+    path: /vex/vrc/team_awards/{name}
+    controller: App\Controller\VEXVRCWebParserController::fetchTeamAwards

@@ -20,7 +20,11 @@ class VEXIQWebParserController {
     const MIDDLE_SCHOOL = 'Middle School';
     const ELEMENTARY_SCHOOL = 'Elementary';
     const SCHOOL_LEVELS = array(VEXIQWebParserController::MIDDLE_SCHOOL, VEXIQWebParserController::ELEMENTARY_SCHOOL);
-
+    const WORLD_RANKING_API_URL_TPL = "https://www.robotevents.com/api/seasons/124/skills?post_season=0&grade_level=%s";
+    const TEAM_PROFILE_URL_TPL = 'https://www.robotevents.com/teams/VIQC/%s';
+    const EVENT_URL_TPL = 'https://www.robotevents.com/robot-competitions/vex-iq-challenge/%s.html';
+    const TEAM_AWARD_API_URL_TPL = "https://www.robotevents.com/api/teams/%s/awards";
+    const TEAM_API_NUBMER_PATTERN = "/:team=\"[0-9]+\"/";
     var $worldRankingsJsonObjects;
 
     public function getWorldRankingBySchoolLevel($schoolLevel) {
@@ -29,8 +33,8 @@ class VEXIQWebParserController {
             throw new Exception($error);
         }
 
-        if (!in_array($schoolLevel, VEXIQWebParserController::SCHOOL_LEVELS)) {
-            $error = '$shoolLevel must be one of the following: ' . implode(", ", VEXIQWebParserController::SCHOOL_LEVELS);
+        if (!in_array($schoolLevel, static::SCHOOL_LEVELS)) {
+            $error = '$shoolLevel must be one of the following: ' . implode(", ", static::SCHOOL_LEVELS);
             $error .= ".  Supplied value: " . $schoolLevel;
             throw new Exception($error);
         }
@@ -38,8 +42,8 @@ class VEXIQWebParserController {
         if ($this->worldRankingsJsonObjects == null) {
             $this->worldRankingsJsonObjects = array();
             $worldRankingsUrls = array();
-            foreach (VEXIQWebParserController::SCHOOL_LEVELS as $level) {
-                $worldRankingJsonApiUrl = sprintf("https://www.robotevents.com/api/seasons/124/skills?post_season=0&grade_level=%s", $level);
+            foreach (static::SCHOOL_LEVELS as $level) {
+                $worldRankingJsonApiUrl = sprintf(static::WORLD_RANKING_API_URL_TPL, $level);
                 $worldRankingJsonApiUrl = str_replace(" ", "%20", $worldRankingJsonApiUrl);
                 $worldRankingsUrls[$level] = $worldRankingJsonApiUrl;
             }
@@ -67,7 +71,7 @@ class VEXIQWebParserController {
 
     public function getTeamWorldRanking($teamNumber) {
         $res = null;
-        foreach (VEXIQWebParserController::SCHOOL_LEVELS as $schoolLevel) {
+        foreach (static::SCHOOL_LEVELS as $schoolLevel) {
             $res = $this->getTeamWorldRankingBySchoolLevel($teamNumber, $schoolLevel);
             if ($res != null)
                 break;
@@ -79,7 +83,7 @@ class VEXIQWebParserController {
         $ranking = $this->getTeamWorldRanking($teamNumber);
         $res = "";
         if ($ranking == null) {
-            $res = sprintf("%s was not found in world rankings in the following school levels: %s", $teamNumber, implode(", ", VEXIQWebParserController::SCHOOL_LEVELS));
+            $res = sprintf("%s was not found in world rankings in the following school levels: %s", $teamNumber, implode(", ", static::SCHOOL_LEVELS));
         } else {
             $scores = $ranking["scores"];
             $res = sprintf("World ranking: %s, score: %s, programming: %s, driver: %s, maxProgramming: %s, maxDriver: %s",
@@ -99,9 +103,9 @@ class VEXIQWebParserController {
          *
          * Note: canonical team number is 3716Z, but database team id is 93571
          */
-        $url = sprintf('https://www.robotevents.com/teams/VIQC/%s', $teamNumber);
+        $url = sprintf(static::TEAM_PROFILE_URL_TPL, $teamNumber);
         $html = file_get_contents($url);
-        $pattern = "/:team=\"[0-9]+\"/";
+        $pattern = static::TEAM_API_NUBMER_PATTERN;
         $teamApiNumber = null;
         $success = preg_match($pattern, $html, $match);
         if ($success) {
@@ -112,14 +116,14 @@ class VEXIQWebParserController {
 
     public function getTeamProfileJsonObject($teamNumber) {
         $teamApiNumber = $this->getTeamApiNumber($teamNumber);
-        $string = file_get_contents(sprintf("https://www.robotevents.com/api/teams/%s/awards", $teamApiNumber));
+        $string = file_get_contents(sprintf(static::TEAM_AWARD_API_URL_TPL, $teamApiNumber));
         $json_a = json_decode($string, true);
         return $json_a;
     }
 
     public function getTeamAwards($teamNumber) {
         $teamApiNumber = $this->getTeamApiNumber($teamNumber);
-        $string = file_get_contents(sprintf("https://www.robotevents.com/api/teams/%s/awards", $teamApiNumber));
+        $string = file_get_contents(sprintf(static::TEAM_AWARD_API_URL_TPL, $teamApiNumber));
         $json_a = json_decode($string, true);
 
         $events = $json_a["data"];
@@ -217,8 +221,8 @@ class VEXIQWebParserController {
     }
 
     public function parseTeamListFromEvent($name) {
-        $url = sprintf('https://www.robotevents.com/robot-competitions/vex-iq-challenge/%s.html', $name);
-        $html = file_get_contents($url);
+        $eventUrl = sprintf(static::EVENT_URL_TPL, $name);
+        $html = file_get_contents($eventUrl);
 
         // try loading the dom
         try {
@@ -249,7 +253,8 @@ class VEXIQWebParserController {
             $teamNameElement = $element->children(1);
             $teamName = $teamNameElement->innertext;
             $teamNumberList[$teamNumber] = $teamName;
-            $teamProfileUrls[$teamNumber] = sprintf('https://www.robotevents.com/teams/VIQC/%s', $teamNumber);
+            $url = sprintf(static::TEAM_PROFILE_URL_TPL, $teamNumber);
+            $teamProfileUrls[$teamNumber] = $url;
         }
 
         $teamProfileHtmlContents = $this->getMultipleWebRequestsInGroupsOfTen($teamProfileUrls);
@@ -257,15 +262,15 @@ class VEXIQWebParserController {
         foreach ($teamProfileHtmlContents as $teamNumber => $teamProfileHtml) {
             if ($teamProfileHtml == null)
                 throw \Exception("$teamProfileHtml is null");
-            $pattern = "/:team=\"[0-9]+\"/";
+            $pattern = static::TEAM_API_NUBMER_PATTERN;
             $teamApiNumber = null;
             $success = preg_match($pattern, $teamProfileHtml, $match);
             if ($success) {
                 $teamApiNumber = str_replace("\"", "", str_replace(":team=", "", $match[0]));
             } else {
-                throw \Exception("team api number not found.");
+                throw new \Exception("team api number not found.  Event url: ". $eventUrl ." Team url:". $teamProfileUrls[$teamNumber]. "  Error:" . $teamProfileHtml);
             }
-            $teamAwardsApiUrl = sprintf("https://www.robotevents.com/api/teams/%s/awards", $teamApiNumber);
+            $teamAwardsApiUrl = sprintf(static::TEAM_AWARD_API_URL_TPL, $teamApiNumber);
             $teamAwardsApiUrls[$teamNumber] = $teamAwardsApiUrl;
         }
         $teamAwardsJsonContents = $this->getMultipleWebRequestsInGroupsOfTen($teamAwardsApiUrls);
