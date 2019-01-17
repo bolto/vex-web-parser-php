@@ -4,8 +4,8 @@
 
 # the "app_vex_parser" route name is not important yet
 app_vex_team_list:
-    path: /vex/web_parser/team_list/{name}
-    controller: App\Controller\VEXWebParserController::parseTeamListFromEvent
+    path: /vex/iq/team_list/{name}
+    controller: App\Controller\VEXIQWebParserController::parseTeamListFromEvent
 app_vex_team_awards:
-    path: /vex/web_parser/team_awards/{name}
-    controller: App\Controller\VEXWebParserController::fetchTeamAwards
+    path: /vex/iq/team_awards/{name}
+    controller: App\Controller\VEXIQWebParserController::fetchTeamAwards
