@@ -19,7 +19,7 @@ class VEXIQWebParserController {
     // VEX IQ school levels: elementary, middle school
     const MIDDLE_SCHOOL = 'Middle School';
     const ELEMENTARY_SCHOOL = 'Elementary';
-    const SCHOOL_LEVELS = array(VEXWebParserController::MIDDLE_SCHOOL, VEXWebParserController::ELEMENTARY_SCHOOL);
+    const SCHOOL_LEVELS = array(VEXIQWebParserController::MIDDLE_SCHOOL, VEXIQWebParserController::ELEMENTARY_SCHOOL);
 
     var $worldRankingsJsonObjects;
 
@@ -29,8 +29,8 @@ class VEXIQWebParserController {
             throw new Exception($error);
         }
 
-        if (!in_array($schoolLevel, VEXWebParserController::SCHOOL_LEVELS)) {
-            $error = '$shoolLevel must be one of the following: ' . implode(", ", VEXWebParserController::SCHOOL_LEVELS);
+        if (!in_array($schoolLevel, VEXIQWebParserController::SCHOOL_LEVELS)) {
+            $error = '$shoolLevel must be one of the following: ' . implode(", ", VEXIQWebParserController::SCHOOL_LEVELS);
             $error .= ".  Supplied value: " . $schoolLevel;
             throw new Exception($error);
         }
@@ -38,7 +38,7 @@ class VEXIQWebParserController {
         if ($this->worldRankingsJsonObjects == null) {
             $this->worldRankingsJsonObjects = array();
             $worldRankingsUrls = array();
-            foreach (VEXWebParserController::SCHOOL_LEVELS as $level) {
+            foreach (VEXIQWebParserController::SCHOOL_LEVELS as $level) {
                 $worldRankingJsonApiUrl = sprintf("https://www.robotevents.com/api/seasons/124/skills?post_season=0&grade_level=%s", $level);
                 $worldRankingJsonApiUrl = str_replace(" ", "%20", $worldRankingJsonApiUrl);
                 $worldRankingsUrls[$level] = $worldRankingJsonApiUrl;
@@ -67,7 +67,7 @@ class VEXIQWebParserController {
 
     public function getTeamWorldRanking($teamNumber) {
         $res = null;
-        foreach (VEXWebParserController::SCHOOL_LEVELS as $schoolLevel) {
+        foreach (VEXIQWebParserController::SCHOOL_LEVELS as $schoolLevel) {
             $res = $this->getTeamWorldRankingBySchoolLevel($teamNumber, $schoolLevel);
             if ($res != null)
                 break;
@@ -79,7 +79,7 @@ class VEXIQWebParserController {
         $ranking = $this->getTeamWorldRanking($teamNumber);
         $res = "";
         if ($ranking == null) {
-            $res = sprintf("%s was not found in world rankings in the following school levels: %s", $teamNumber, implode(", ", VEXWebParserController::SCHOOL_LEVELS));
+            $res = sprintf("%s was not found in world rankings in the following school levels: %s", $teamNumber, implode(", ", VEXIQWebParserController::SCHOOL_LEVELS));
         } else {
             $scores = $ranking["scores"];
             $res = sprintf("World ranking: %s, score: %s, programming: %s, driver: %s, maxProgramming: %s, maxDriver: %s",
