@@ -12,9 +12,10 @@
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sunra\PhpSimple\HtmlDomParser;
 
-class VEXIQWebParserController {
+class VEXIQWebParserController extends AbstractController {
 
     // VEX IQ school levels: elementary, middle school
     const MIDDLE_SCHOOL = 'Middle School';
@@ -25,6 +26,10 @@ class VEXIQWebParserController {
     const EVENT_URL_TPL = 'https://www.robotevents.com/robot-competitions/vex-iq-challenge/%s.html';
     const TEAM_AWARD_API_URL_TPL = "https://www.robotevents.com/api/teams/%s/awards";
     const TEAM_API_NUBMER_PATTERN = "/:team=\"[0-9]+\"/";
+    // event list url below starts from 2019/01/01
+    const EVENT_LIST_JSON_URL = "https://www.robotevents.com/robot-competitions/vex-iq-challenge/table?seasonId=124&eventType=1&name=&from_date=01%2F01%2F2019&to_date=&country_id=244&grade_level_id=2&country_region_id=12&city=&level_class_id=&draw=1&columns%5B0%5D%5Bdata%5D=status&columns%5B0%5D%5Bname%5D=status&columns%5B0%5D%5Bsearchable%5D=true&columns%5B0%5D%5Borderable%5D=false&columns%5B0%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B0%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B1%5D%5Bdata%5D=spots_open&columns%5B1%5D%5Bname%5D=spots_open&columns%5B1%5D%5Bsearchable%5D=true&columns%5B1%5D%5Borderable%5D=false&columns%5B1%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B1%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B2%5D%5Bdata%5D=event_code&columns%5B2%5D%5Bname%5D=sku&columns%5B2%5D%5Bsearchable%5D=true&columns%5B2%5D%5Borderable%5D=false&columns%5B2%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B2%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B3%5D%5Bdata%5D=event_date&columns%5B3%5D%5Bname%5D=event_start_date&columns%5B3%5D%5Bsearchable%5D=true&columns%5B3%5D%5Borderable%5D=false&columns%5B3%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B3%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B4%5D%5Bdata%5D=location&columns%5B4%5D%5Bname%5D=venues.city&columns%5B4%5D%5Bsearchable%5D=true&columns%5B4%5D%5Borderable%5D=false&columns%5B4%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B4%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B5%5D%5Bdata%5D=event_type.name&columns%5B5%5D%5Bname%5D=eventType.name&columns%5B5%5D%5Bsearchable%5D=true&columns%5B5%5D%5Borderable%5D=false&columns%5B5%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B5%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B6%5D%5Bdata%5D=name_link&columns%5B6%5D%5Bname%5D=name&columns%5B6%5D%5Bsearchable%5D=true&columns%5B6%5D%5Borderable%5D=false&columns%5B6%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B6%5D%5Bsearch%5D%5Bregex%5D=false&order%5B0%5D%5Bcolumn%5D=0&order%5B0%5D%5Bdir%5D=asc&start=0&length=25&search%5Bvalue%5D=&search%5Bregex%5D=false&_=1547715441474";
+    const INCLUDED_CITIES = array("Sunnyvale", "Dublin", "Richmond", "Pleasanton", "Mountain View", "Davis", "Hollister", "Fremont", "Morgan Hill", "Redwood City", "San Jose", "Gilroy", "Saratoga", "Belmont");
+
     var $worldRankingsJsonObjects;
 
     public function getWorldRankingBySchoolLevel($schoolLevel) {
@@ -299,7 +304,30 @@ class VEXIQWebParserController {
                     . "</ul>", $teamNumberList[$teamNumber], $teamNumber, $worldRanking, $awardsResult);
             $res .= $teamStatsHtml;
         }
-        return new Response('<html><body>' . $res . '</body></html>');
+        //return new Response('<html><body>' . $res . '</body></html>');
+        return new Response($res);
+    }
+    public function parseEventListFromJsonUrl($eventJsonUrl) {
+        $string = file_get_contents($eventJsonUrl);
+        $json_a = json_decode($string, true);
+        $events = $json_a["data"];
+        $res = array();
+        foreach ($events as $event) {
+            $city = $event["city"];
+            if (!in_array($city, static::INCLUDED_CITIES)){
+                continue;
+            }
+            $eventName = $event["name"];
+            $eventDate = $event["event_date"];
+            $eventCode = $event["event_code"];
+            $res[$eventCode] = sprintf("%s, %s, %s CA", $eventName, $eventDate, $city);
+        }
+        return $res;
+    }
+    public function index(){
+        $events = self::parseEventListFromJsonUrl(static::EVENT_LIST_JSON_URL);
+        $dropdownHtml = "";
+        return $this->render('vexiq.index.html.twig', ['events' => $events]);
     }
 
 }

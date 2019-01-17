@@ -3,6 +3,9 @@
 #    controller: App\Controller\DefaultController::index
 
 # the "app_vex_parser" route name is not important yet
+app_vex_iq_event_index:
+    path: /vex/iq/events
+    controller: App\Controller\VEXIQWebParserController::index
 app_vex_iq_team_list:
     path: /vex/iq/team_list/{name}
     controller: App\Controller\VEXIQWebParserController::parseTeamListFromEvent
