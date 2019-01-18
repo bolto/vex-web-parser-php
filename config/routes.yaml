@@ -12,6 +12,9 @@ app_vex_iq_team_list:
 app_vex_iq_team_awards:
     path: /vex/iq/team_awards/{name}
     controller: App\Controller\VEXIQWebParserController::fetchTeamAwards
+app_vex_vrc_event_index:
+    path: /vex/vrc/events
+    controller: App\Controller\VEXVRCWebParserController::index
 app_vex_vrc_team_list:
     path: /vex/vrc/team_list/{name}
     controller: App\Controller\VEXVRCWebParserController::parseTeamListFromEvent

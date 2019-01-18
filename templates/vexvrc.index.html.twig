@@ -15,17 +15,17 @@
                 <div class="col-lg-6 mh-100">
                     <div class="btn-group mh-100">
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            VEX IQ Tournaments
+                            VEX VRC Tournaments
                         </button>
                         <div class="dropdown-menu">
                             {% for code, name in events %}
-                                <a class="dropdown-item" href="#" onclick="load_home('/vex/iq/team_list/{{ code }}')">{{ name }}</a>
+                                <a class="dropdown-item" href="#" onclick="load_home('/vex/vrc/team_list/{{ code }}')">{{ name }}</a>
                             {% endfor %}
                         </div>
                     </div>
                     <script>
                         function load_home(url) {
-                            document.getElementById("content").innerHTML = '<object class="row mh-100" type="text/html" data="' + url + '" width="90%" height="4000 px"></object>';
+                            document.getElementById("content").innerHTML = '<object class="row mh-100" type="text/html" data="' + url + '" width="90%" height="6000 px"></object>';
                         }
                     </script>
 

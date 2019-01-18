@@ -326,7 +326,6 @@ class VEXIQWebParserController extends AbstractController {
     }
     public function index(){
         $events = self::parseEventListFromJsonUrl(static::EVENT_LIST_JSON_URL);
-        $dropdownHtml = "";
         return $this->render('vexiq.index.html.twig', ['events' => $events]);
     }
 
