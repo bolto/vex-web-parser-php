@@ -307,14 +307,14 @@ class VEXIQWebParserController extends AbstractController {
         //return new Response('<html><body>' . $res . '</body></html>');
         return new Response($res);
     }
-    public function parseEventListFromJsonUrl($eventJsonUrl) {
+    public function parseEventListFromJsonUrl($eventJsonUrl, $citiesFilter=null) {
         $string = file_get_contents($eventJsonUrl);
         $json_a = json_decode($string, true);
         $events = $json_a["data"];
         $res = array();
         foreach ($events as $event) {
             $city = $event["city"];
-            if (!in_array($city, static::INCLUDED_CITIES)){
+            if ($citiesFilter != null && !in_array($city, static::INCLUDED_CITIES)){
                 continue;
             }
             $eventName = $event["name"];
