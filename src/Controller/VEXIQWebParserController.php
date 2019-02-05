@@ -280,7 +280,24 @@ class VEXIQWebParserController extends AbstractController {
         }
         $teamAwardsJsonContents = $this->getMultipleWebRequestsInGroupsOfTen($teamAwardsApiUrls);
 
+        // This block below will try to sort team list order by world ranking
+        $teamListOrderedByWorldRanking = array();
+        $teamListWithNoWorldRanking = array();
         foreach ($teamAwardsJsonContents as $teamNumber => $teamAwardsJsonContent) {
+            $worldRanking = $this->getTeamWorldRanking($teamNumber);
+            // if world ranking is not found (ie, null), set it to zero
+            if ($worldRanking == null){
+                $teamListWithNoWorldRanking[$teamNumber] = 0;
+            }else{
+                $teamListOrderedByWorldRanking[$teamNumber] = $worldRanking["rank"];
+            }
+        }
+        // sort teams that have rankings
+        asort($teamListOrderedByWorldRanking);
+        // append teams that do not have rankings to the end of sorted teams
+        array_merge($teamListOrderedByWorldRanking, $teamListWithNoWorldRanking);
+        foreach ($teamListOrderedByWorldRanking as $teamNumber => $worldRanking) {
+            $teamAwardsJsonContent = $teamAwardsJsonContents[$teamNumber];
             $teamAwardsJsonObject = json_decode($teamAwardsJsonContent, true);
             $awardsResult = $this->getTeamAwardsHtml($teamNumber, $teamAwardsJsonObject);
             if ($awardsResult == "") {
