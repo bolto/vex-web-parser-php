@@ -19,12 +19,14 @@
                         </button>
                         <div class="dropdown-menu">
                             {% for code, name in events %}
-                                <a class="dropdown-item" href="#" onclick="load_home('/vex/vrc/team_list/{{ code }}')">{{ name }}</a>
+                                <a class="dropdown-item" href="#" onclick="load_home('/vex/vrc/team_list/{{ code }}', '{{ name }}')">{{ name }}</a>
                             {% endfor %}
                         </div>
                     </div>
                     <script>
-                        function load_home(url) {
+                        function load_home(url, name) {
+                            document.getElementById("event_link").innerHTML = name + " permeament link";
+                            document.getElementById("event_link").setAttribute("href", url);
                             document.getElementById("content").innerHTML = '<object class="row mh-100" type="text/html" data="' + url + '" width="90%" height="6000 px"></object>';
                         }
                     </script>
