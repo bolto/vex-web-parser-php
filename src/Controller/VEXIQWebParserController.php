@@ -84,8 +84,11 @@ class VEXIQWebParserController extends AbstractController {
         return $res;
     }
 
-    public function getWorldRankingHtml($teamNumber) {
-        $ranking = $this->getTeamWorldRanking($teamNumber);
+    public function getWorldRankingHtml($teamNumber, $json) {
+        /**
+         * $json: JSON object for team's world ranking API call.
+         */
+        $ranking = $json;
         $res = "";
         if ($ranking == null) {
             $res = sprintf("%s was not found in world rankings in the following school levels: %s", $teamNumber, implode(", ", static::SCHOOL_LEVELS));
@@ -283,13 +286,16 @@ class VEXIQWebParserController extends AbstractController {
         // This block below will try to sort team list order by world ranking
         $teamListOrderedByWorldRanking = array();
         $teamListWithNoWorldRanking = array();
+        $teamsWorldRanking = array();
         foreach ($teamAwardsJsonContents as $teamNumber => $teamAwardsJsonContent) {
             $worldRanking = $this->getTeamWorldRanking($teamNumber);
             // if world ranking is not found (ie, null), set it to zero
             if ($worldRanking == null){
                 $teamListWithNoWorldRanking[$teamNumber] = 0;
+                $teamsWorldRanking[$teamNumber] = null;
             }else{
                 $teamListOrderedByWorldRanking[$teamNumber] = $worldRanking["rank"];
+                $teamsWorldRanking[$teamNumber] = $worldRanking;
             }
         }
         // sort teams that have rankings
@@ -303,7 +309,7 @@ class VEXIQWebParserController extends AbstractController {
             if ($awardsResult == "") {
                 $awardsResult = "No awards found";
             }
-            $worldRanking = $this->getWorldRankingHtml($teamNumber);
+            $worldRanking = $this->getWorldRankingHtml($teamNumber, $teamsWorldRanking[$teamNumber]);
             $teamStatsHtml = sprintf(
                     "<ul>"
                     . "<li>%s (%s)"
