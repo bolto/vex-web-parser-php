@@ -172,7 +172,7 @@ class VEXIQWebParserController extends AbstractController {
         return $res;
     }
 
-    public function getMultipleWebRequestsInGroupsOfTen($urls, $groupSize = 40) {
+    public function getMultipleWebRequestsInGroups($urls, $groupSize = 40) {
         $counter = 0;
         $batchArray = null;
         $allResponses = array();
@@ -269,7 +269,7 @@ class VEXIQWebParserController extends AbstractController {
             $teamProfileUrls[$teamNumber] = $url;
         }
 
-        $teamProfileHtmlContents = $this->getMultipleWebRequestsInGroupsOfTen($teamProfileUrls);
+        $teamProfileHtmlContents = $this->getMultipleWebRequestsInGroups($teamProfileUrls);
         $teamAwardsApiUrls = array();
         foreach ($teamProfileHtmlContents as $teamNumber => $teamProfileHtml) {
             if ($teamProfileHtml == null)
@@ -285,7 +285,7 @@ class VEXIQWebParserController extends AbstractController {
             $teamAwardsApiUrl = sprintf(static::TEAM_AWARD_API_URL_TPL, $teamApiNumber);
             $teamAwardsApiUrls[$teamNumber] = $teamAwardsApiUrl;
         }
-        $teamAwardsJsonContents = $this->getMultipleWebRequestsInGroupsOfTen($teamAwardsApiUrls);
+        $teamAwardsJsonContents = $this->getMultipleWebRequestsInGroups($teamAwardsApiUrls);
 
         // This block below will try to sort team list order by world ranking
         $teamListOrderedByWorldRanking = array();
