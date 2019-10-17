@@ -13,8 +13,9 @@ namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sunra\PhpSimple\HtmlDomParser;
+use KubAT\PhpSimple\HtmlDomParser;
 use Symfony\Component\Validator\Constraints\DateTime;
+use Psr\Log\LoggerInterface;
 
 class VEXIQWebParserController extends AbstractController {
 

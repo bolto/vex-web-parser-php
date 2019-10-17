@@ -38,7 +38,7 @@
         "symfony/validator": "4.2.*",
         "symfony/web-link": "4.2.*",
         "symfony/yaml": "4.2.*",
-        "sunra/php-simple-html-dom-parser": "1.5.2"
+        "kub-at/php-simple-html-dom-parser": "1.7.1"
     },
     "require-dev": {
         "symfony/debug-pack": "*",
