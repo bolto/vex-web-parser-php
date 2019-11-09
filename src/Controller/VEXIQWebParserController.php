@@ -20,6 +20,7 @@ use Psr\Log\LoggerInterface;
 class VEXIQWebParserController extends AbstractController {
 
     // VEX IQ school levels: elementary, middle school
+    const VEX_COMPETITION_NAME = 'iq';
     const MIDDLE_SCHOOL = 'Middle School';
     const ELEMENTARY_SCHOOL = 'Elementary';
     const SCHOOL_LEVELS = array(VEXIQWebParserController::MIDDLE_SCHOOL, VEXIQWebParserController::ELEMENTARY_SCHOOL);
@@ -162,7 +163,7 @@ class VEXIQWebParserController extends AbstractController {
             $eventCode = $event["event_code"];
             $dateStr = date('Y-m-d', $eventDate/1000);
             $res .= "<ul class=\"list-unstyled\">\n";
-            $res .= sprintf("<li><a class=\"accordion-toggle btn-block text-warning\" href='/vex/iq/team_list/%s' target='_blank'>%s (%s)</a>", $eventCode, $eventName, $dateStr);
+            $res .= sprintf("<li><a class=\"accordion-toggle btn-block text-warning\" href='/vex/%s/team_list/%s' target='_blank'>%s (%s)</a>", VEXIQWebParserController::VEX_COMPETITION_NAME, $eventCode, $eventName, $dateStr);
             $res .= "<ul>\n";
             foreach ($event["awards"] as $award) {
                 $awardName = $award["name"];
