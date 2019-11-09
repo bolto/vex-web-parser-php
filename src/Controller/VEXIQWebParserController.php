@@ -163,7 +163,7 @@ class VEXIQWebParserController extends AbstractController {
             $eventCode = $event["event_code"];
             $dateStr = date('Y-m-d', $eventDate/1000);
             $res .= "<ul class=\"list-unstyled\">\n";
-            $res .= sprintf("<li><a class=\"accordion-toggle btn-block text-warning\" href='/vex/%s/team_list/%s' target='_blank'>%s (%s)</a>", VEXIQWebParserController::VEX_COMPETITION_NAME, $eventCode, $eventName, $dateStr);
+            $res .= sprintf("<li><a class=\"accordion-toggle btn-block text-warning\" href='/vex/%s/team_list/%s' target='_blank'>%s (%s)</a>", static::VEX_COMPETITION_NAME, $eventCode, $eventName, $dateStr);
             $res .= "<ul>\n";
             foreach ($event["awards"] as $award) {
                 $awardName = $award["name"];
