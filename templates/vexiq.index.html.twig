@@ -19,14 +19,16 @@
                         </button>
                         <div class="dropdown-menu">
                             {% for code, name in events %}
-                                <a class="dropdown-item" href="#" onclick="load_home('/vex/iq/team_list/{{ code }}', '{{ name }}')">{{ name }}</a>
+                                <a class="dropdown-item" href="#" onclick="load_home('https://www.robotevents.com/robot-competitions/vex-iq-challenge/{{ code }}.html', '/vex/iq/team_list/{{ code }}', '{{ name }}')">{{ name }}</a>
                             {% endfor %}
                         </div>
                     </div>
                     <script>
-                        function load_home(url, name) {
+                        function load_home(vex_url, url, name) {
                             document.getElementById("event_link").innerHTML = name + " permanent link";
                             document.getElementById("event_link").setAttribute("href", url);
+                            document.getElementById("vex_event_link").innerHTML = name + " VEX event link";
+                            document.getElementById("vex_event_link").setAttribute("href", vex_url);
                             document.getElementById("content").innerHTML = '<object class="row mh-100" type="text/html" data="' + url + '" width="90%" height="4000 px"></object>';
                         }
                     </script>
@@ -36,6 +38,9 @@
             </div>
             <div class="row mh-100">
                 <a id='event_link' href=""></a>
+            </div>
+            <div class="row mh-100">
+                <a id='vex_event_link' href=""></a>
             </div>
             <div class="row mh-100">
                 <div class="w-100 p-3 mh-100" id='content'></div>
